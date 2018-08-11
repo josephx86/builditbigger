@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">JokeUiLibrary</string>
+    <string name="joke_key" translatable="false">joke_extra_key</string>
+    <string name="lame_joke">That is funny. Ha. Ha. Ha.</string>
+</resources>
