@@ -1,8 +1,6 @@
 package com.udacity.gradle.builditbigger;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -10,17 +8,16 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
-import com.udacity.gradle.builditbigger.jokeuilibrary.JokeActivity;
 
 import java.io.IOException;
 
 @SuppressLint("StaticFieldLeak")
-public class JokeAsyncTask extends AsyncTask<Context, Void, String> {
-    private Context context;
+public class JokeAsyncTask extends AsyncTask<IJokeReceiver, Void, String> {
+    private IJokeReceiver jokeReceiver;
     private MyApi myApiService;
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected String doInBackground(IJokeReceiver... params) {
         if (myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
@@ -40,7 +37,7 @@ public class JokeAsyncTask extends AsyncTask<Context, Void, String> {
         }
 
         if (params.length > 0) {
-            context = params[0];
+            jokeReceiver = params[0];
         }
 
         try {
@@ -52,11 +49,8 @@ public class JokeAsyncTask extends AsyncTask<Context, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        if (context != null) {
-            Intent jokeIntent = new Intent(context, JokeActivity.class);
-            String key = context.getString(R.string.joke_key);
-            jokeIntent.putExtra(key, result);
-            context.startActivity(jokeIntent);
+        if (jokeReceiver != null) {
+            jokeReceiver.onJokeReceived(result);
         }
     }
 }
